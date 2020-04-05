@@ -2,6 +2,9 @@ plugins {
 	id 'org.springframework.boot' version '2.2.6.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+
+	// @see https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
+	id 'com.google.cloud.tools.jib' version '2.1.0'
 }
 
 group = 'dev.appkr'
@@ -35,3 +38,5 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+apply from: 'gradle/docker.gradle'

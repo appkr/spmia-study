@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+    license-service:
+        image: license-service:latest
+        ports:
+            - "8080:8080"
+        networks:
+            - spmia
+
+networks:
+    name: spmia
+    driver: custom-driver-1
