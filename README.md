@@ -25,12 +25,39 @@ $ docker run -p 8080:8080 license-service:0.0.1-SNAPSHOT
 > ```
 
 #### Test
+
+##### CH2
 ```sh
-$ curl -s -i http://localhost:8080/v1/organizations/7af0a582-b16c-497a-95cb-7b75db9bd8a5/licenses/7a8adeb8-43d7-48f6-b861-ea4c4d566080
+$ curl -s -i http://localhost:8080/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c/licenses/08dbe05-606e-4dad-9d33-90ef10e334f9
 # HTTP/1.1 200
 # Content-Type: application/json
 # Transfer-Encoding: chunked
 # Date: Sun, 05 Apr 2020 07:30:53 GMT
 #
-# {"id":"7a8adeb8-43d7-48f6-b861-ea4c4d566080","organizationId":"7af0a582-b16c-497a-95cb-7b75db9bd8a5","productName":"Teleco","licenseType":"Seat"}
+# {"id":"08dbe05-606e-4dad-9d33-90ef10e334f9","organizationId":"442adb6e-fa58-47f3-9ca2-ed1fecdfe86c","productName":"Teleco","licenseType":"Seat"}
+```
+
+##### CH3
+
+```sh
+$ curl -s http://localhost:8888/license-service/default | jq
+# {
+#   "name": "license-service",
+#   "profiles": [
+#     "default"
+#   ],
+#   "label": null,
+#   "version": null,
+#   "state": null,
+#   "propertySources": [
+#     {
+#       "name": "file:////Users/appkr/workspace/spmia/configsvr/src/main/resources/config/# license-service/license-service.yml",
+#       "source": {
+#         "example.property": "I AM IN THE DEFAULT",
+#         "spring.jpa.database": "MYSQL",
+#         "...": "..."
+#       }
+#     }
+#   ]
+# }
 ```

@@ -16,17 +16,13 @@ public class LicenseServiceController {
     @GetMapping("/{licenseId}")
     public License getLicense(@PathVariable("organizationId") String organizationId,
                               @PathVariable("licenseId") String licenseId) {
-        return License.builder()
-            .id(licenseId)
-            .organizationId(organizationId)
-            .productName("Teleco")
-            .licenseType("Seat")
-            .build();
+        return licenseService.getLicense(organizationId, licenseId);
     }
 
     @PostMapping("/{licenseId}")
-    public String createLicense(@PathVariable("licenseId") String licenseId) {
-        return "This is the post";
+    public String createLicense(@RequestBody License license) {
+        licenseService.createLicense(license);
+        return "Success";
     }
 
     @PutMapping("/{licenseId}")
