@@ -1,1 +1,3 @@
-
+# @see configsvr/src/main/resources/config/${spring.application.name}/${spring.application.name}.yml
+server:
+    port: 8080

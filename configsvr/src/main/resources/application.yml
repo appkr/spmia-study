@@ -8,4 +8,4 @@ spring:
         config:
             server:
                 native:
-                    search-locations: file:////Users/appkr/workspace/spmia/configsvr/src/main/resources/config/license-service
+                    search-locations: file:////Users/appkr/workspace/spmia/configsvr/src/main/resources/config/license-service, file:////Users/appkr/workspace/spmia/configsvr/src/main/resources/config/organization-service
