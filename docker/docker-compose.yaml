@@ -21,6 +21,20 @@ services:
         networks:
             - spmia
 
+    config-server:
+        image: config-server:latest
+        ports:
+            - "9999:9999"
+        networks:
+            - spmia
+
+    eureka-server:
+        image: eureka-server:latest
+        ports:
+            - "8761:8761"
+        networks:
+            - spmia
+
 networks:
     name: spmia
     driver: custom-driver-1
