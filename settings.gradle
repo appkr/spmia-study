@@ -1,0 +1,6 @@
+rootProject.name = 'spmia'
+
+include 'configsvr'
+include 'eurekasvr'
+include 'organization-service'
+include 'license-service'

@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+
+    mysql:
+        image: mysql:5.7.29
+        container_name: mysql
+        # To create database on docker-compose startup
+        # @see https://hub.docker.com/_/mysql
+        # When a container is started for the first time, a new database with the specified name will be created
+        # and initialized with the provided configuration variables. Furthermore, it will execute files
+        # with extensions .sh, .sql and .sql.gz that are found in /docker-entrypoint-initdb.d.
+        # Files will be executed in alphabetical order.
+        volumes:
+            - ../mysql_data:/var/lib/mysql/
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        environment:
+            - MYSQL_USER=root
+            - MYSQL_ROOT_PASSWORD=secret
+        ports:
+            - 3306:3306
+        command: mysqld --lower_case_table_names=1 --skip-ssl --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+        healthcheck:
+            test: ["CMD", "mysql -uroot", "-psecret", "-e", "SELECT 1"]
+
+    eurekasvr:
+        image: eurekasvr:latest
+        container_name: eurekasvr
+        ports:
+            - "8761:8761"
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
+
+    configsvr:
+        image: configsvr:latest
+        container_name: configsvr
+        ports:
+            - "8888:8888"
+        depends_on:
+            - eurekasvr
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:8888/actuator/health"]
+
+    organization-service:
+        image: organization-service:latest
+        container_name: organization-service
+        ports:
+            - "8090:8090"
+        depends_on:
+            - mysql
+            - eurekasvr
+            - configsvr
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:8090/actuator/health"]
+        restart: on-failure
+
+    license-service:
+        image: license-service:latest
+        container_name: license-service
+        ports:
+            - "8080:8080"
+        # To control startup order
+        # @see https://docs.docker.com/compose/startup-order/
+        # @see https://stackoverflow.com/a/41854997
+        depends_on:
+            - mysql
+            - eurekasvr
+            - configsvr
+            - organization-service
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+        restart: on-failure

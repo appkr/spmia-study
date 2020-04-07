@@ -1,21 +1,52 @@
 ## Spring Microservices In Action
 - https://github.com/carnellj/spmia_overview
 
-#### Run application
 ```sh
-$ git clone git@github.com/appkr/spima-study
-$ cd license-service
-$ ./gradlew clean bootRun
+$ gradle -q projects
+
+Root project 'spmia'
++--- Project ':configsvr'
++--- Project ':eurekasvr'
++--- Project ':license-service'
+\--- Project ':organization-service'
 ```
 
-#### Build & run docker
-```sh
-$ ./gradlew jibDockerBuild
-$ docker run -p 8080:8080 license-service:0.0.1-SNAPSHOT
+#### Run application locally
+Create databases
+```sql
+CREATE DATABASE IF NOT EXISTS spmia_organization;
+CREATE DATABASE IF NOT EXISTS spmia_license;
 ```
-> `Note` in the container
-> ```
-> .
+
+Run applications one by one
+```sh
+$ git clone git@github.com/appkr/spima-study
+$ ./gradlew clean 
+$ ./gradlew :configsvr:bootRun 
+$ ./gradlew :eurekasvr:bootRun 
+$ ./gradlew :organization-service:bootRun 
+$ ./gradlew :license-service:bootRun 
+```
+
+OR <kbd>Cmd</kbd>+<kbd>8</kbd> if you prefer intellij
+
+#### Run application on docker
+To start (Database will be automatically created at first run)
+```sh
+$ ./gradlew up
+```
+
+To stop
+```sh
+$ ./gradlew down
+```
+
+> `Note` in the application container
+>
+> We use [jib-gradle-plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin) to build and run the applications on docker
+> ```sh
+> $ tree /app
+> app
 > ├── classpath
 > │   └── license-service-0.0.1-SNAPSHOT-original.jar
 > └── libs
@@ -23,10 +54,24 @@ $ docker run -p 8080:8080 license-service:0.0.1-SNAPSHOT
 >     ├── ...
 >     └── tomcat-embed-websocket-9.0.33.jar
 > ```
+> 
+> ```sh
+> $ docker image inspect license-service:latest | jq ".[0].Config.Entrypoint"
+>    [
+>      "java",
+>      "-cp",
+>      "/app/classpath/*:/app/libs/*",
+>      "dev.appkr.licenses.LicenseServiceApplication"
+>    ]
+> ```
 
-#### Test
+---
 
-##### CH2
+## Exercise
+
+This section is my personal record of studying the book
+
+#### CH2
 
 LicenseService
 ```sh
@@ -39,7 +84,7 @@ $ curl -s -i http://localhost:8080/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1f
 # {"id":"08dbe05-606e-4dad-9d33-90ef10e334f9","organizationId":"442adb6e-fa58-47f3-9ca2-ed1fecdfe86c","productName":"Teleco","licenseType":"Seat"}
 ```
 
-##### CH3
+#### CH3
 
 ConfigServer - LicenseService
 ```sh
@@ -65,10 +110,9 @@ $ curl -s http://localhost:8888/license-service/default | jq
 # }
 ```
 
-##### CH4
+#### CH4
 
 Organization Service
-
 ```sh
 $ curl -s -i http://localhost:8090/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c
 # HTTP/1.1 200
@@ -172,3 +216,5 @@ $ curl -s http://localhost:8080/v1/tools/eureka/services | jq
 #   "ORGANIZATION-SERVICE - http://172.30.1.18:8090:8090"
 # ]
 ```
+
+![](docs/eurekasvr.png)

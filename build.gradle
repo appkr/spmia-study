@@ -1,0 +1,59 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.6.RELEASE'
+    // @see https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
+    id 'com.google.cloud.tools.jib' version '2.1.0'
+}
+
+// For multi-module gradle project @see https://jojoldu.tistory.com/123
+// For multi-module docker build @see https://github.com/dlsrb6342/blog-sample/tree/master/gradle-docker-example
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group = 'dev.appkr'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.google.cloud.tools.jib'
+
+    sourceCompatibility = '1.8'
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    }
+
+    ext {
+        set('springCloudVersion', "Hoxton.SR3")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+}
+
+task down(type:Exec) {
+    commandLine 'docker-compose', '-f', 'docker/docker-compose.yml', 'down'
+}
+
+task up(type:Exec) {
+    dependsOn down
+    dependsOn subprojects.jibDockerBuild
+    commandLine 'docker-compose', '-f', 'docker/docker-compose.yml', 'up'
+}

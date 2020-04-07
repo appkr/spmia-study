@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS spmia_organization;
+CREATE DATABASE IF NOT EXISTS spmia_license;
