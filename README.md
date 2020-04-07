@@ -79,59 +79,6 @@ $ curl -s -i http://localhost:8090/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1f
 # {"id":"442adb6e-fa58-47f3-9ca2-ed1fecdfe86c","name":"HR-PowerSuite","contactName":"Doug Drewry","contactEmail":"doug.drewry@hr.com","contactPhone":"920-555-1212"}
 ```
 
-Eureka - LicenseService
-```sh
-$ curl -s -H "Accept:application/json" http://localhost:8761/eureka/apps/license-service | jq
-# {
-#   "application": {
-#     "name": "LICENSE-SERVICE",
-#     "instance": [
-#       {
-#         "instanceId": "172.30.1.18:license-service:8080",
-#         "hostName": "172.30.1.18",
-#         "app": "LICENSE-SERVICE",
-#         "ipAddr": "172.30.1.18",
-#         "status": "UP",
-#         "overriddenStatus": "UNKNOWN",
-#         "port": {
-#           "$": 8080,
-#           "@enabled": "true"
-#         },
-#         "securePort": {
-#           "$": 443,
-#           "@enabled": "false"
-#         },
-#         "countryId": 1,
-#         "dataCenterInfo": {
-#           "@class": "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo",
-#           "name": "MyOwn"
-#         },
-#         "leaseInfo": {
-#           "renewalIntervalInSecs": 30,
-#           "durationInSecs": 90,
-#           "registrationTimestamp": 1586187230363,
-#           "lastRenewalTimestamp": 1586187380260,
-#           "evictionTimestamp": 0,
-#           "serviceUpTimestamp": 1586187229821
-#         },
-#         "metadata": {
-#           "management.port": "8080"
-#         },
-#         "homePageUrl": "http://172.30.1.18:8080/",
-#         "statusPageUrl": "http://172.30.1.18:8080/actuator/info",
-#         "healthCheckUrl": "http://172.30.1.18:8080/actuator/health",
-#         "vipAddress": "license-service",
-#         "secureVipAddress": "license-service",
-#         "isCoordinatingDiscoveryServer": "false",
-#         "lastUpdatedTimestamp": "1586187230363",
-#         "lastDirtyTimestamp": "1586187229736",
-#         "actionType": "ADDED"
-#       }
-#     ]
-#   }
-# }
-```
-
 Eureka - OrganizationService
 ```sh
 $ curl -s -H "Accept:application/json" http://localhost:8761/eureka/apps/organization-service | jq
@@ -183,4 +130,45 @@ $ curl -s -H "Accept:application/json" http://localhost:8761/eureka/apps/organiz
 #     ]
 #   }
 # }
+```
+
+Eureka - LicenseService
+```sh
+$ curl -s -H "Accept:application/json" http://localhost:8761/eureka/apps/license-service | jq
+# {
+#   "application": {
+#     "name": "LICENSE-SERVICE",
+#     "...": "..."
+#   }
+# }
+```
+
+FeignClient
+```sh
+$ curl -s http://localhost:8080/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c/licenses/08dbe05-606e-4dad-9d33-90ef10e334f9 | jq
+# {
+#   "licenseId": "08dbe05-606e-4dad-9d33-90ef10e334f9",
+#   "organizationId": "442adb6e-fa58-47f3-9ca2-ed1fecdfe86c",
+#   "organization": {
+#     "id": "442adb6e-fa58-47f3-9ca2-ed1fecdfe86c",
+#     "name": "HR-PowerSuite",
+#     "contactName": "Doug Drewry",
+#     "contactEmail": "doug.drewry@hr.com",
+#     "contactPhone": "920-555-1212"
+#   },
+#   "productName": "WildCat Application Gateway",
+#   "licenseType": "core-prod",
+#   "licenseMax": 16,
+#   "licenseAllocated": 16,
+#   "comment": "I AM IN THE DEFAULT"
+# }
+```
+
+DiscoveryClient
+```sh
+$ curl -s http://localhost:8080/v1/tools/eureka/services | jq
+# [
+#   "LICENSE-SERVICE - http://172.30.1.18:8080:8080",
+#   "ORGANIZATION-SERVICE - http://172.30.1.18:8090:8090"
+# ]
 ```

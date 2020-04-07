@@ -2,10 +2,7 @@ package dev.appkr.licenses.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -20,6 +17,9 @@ public class License {
 
     @Column(name = "organization_id", nullable = false, length = 36)
     private String organizationId;
+
+    @Transient
+    private Organization organization;
 
     @Column(name = "product_name", nullable = false)
     private String productName;

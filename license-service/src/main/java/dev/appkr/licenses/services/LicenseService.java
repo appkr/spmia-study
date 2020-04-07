@@ -1,8 +1,11 @@
 package dev.appkr.licenses.services;
 
+import dev.appkr.licenses.clients.OrganizationFeignClient;
 import dev.appkr.licenses.config.ServiceConfig;
 import dev.appkr.licenses.model.License;
+import dev.appkr.licenses.model.Organization;
 import dev.appkr.licenses.repository.LicenseRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +18,25 @@ import java.util.UUID;
 public class LicenseService {
 
     private final LicenseRepository licenseRepository;
+    private final OrganizationFeignClient organizationFeignClient;
     private final ServiceConfig config;
 
     public License getLicense(String organizationId, String licenseId) {
         final Optional<License> optional = licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId);
-        final License license = optional.orElseThrow(NoSuchElementException::new);
+        License license = optional.orElseThrow(NoSuchElementException::new);
+
         license.setComment(config.getExampleProperty());
+
+        Organization organization = Organization.builder().build();
+        try {
+            organization = organizationFeignClient.getOrganization(organizationId);
+        } catch (FeignException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        license.setOrganization(organization);
+
         return license;
     }
 
