@@ -6,8 +6,10 @@ import dev.appkr.licenses.config.ServiceConfig;
 import dev.appkr.licenses.model.License;
 import dev.appkr.licenses.model.Organization;
 import dev.appkr.licenses.repository.LicenseRepository;
+import dev.appkr.licenses.utils.UserContextHolder;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -16,6 +18,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LicenseService {
 
     private final LicenseRepository licenseRepository;
@@ -34,8 +37,8 @@ public class LicenseService {
         return license;
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackOrganization")
-    private Organization getOrganization(String organizationId) {
+    @HystrixCommand(fallbackMethod = "fallbackOrganization", threadPoolKey = "getOrganizationThreadPool")
+    public Organization getOrganization(String organizationId) {
         Organization organization = Organization.builder().build();
         try {
             organization = organizationFeignClient.getOrganization(organizationId);
@@ -44,6 +47,8 @@ public class LicenseService {
             throw e;
         }
 
+        log.info("LicenseService.getOrganization Correlation id: {}",
+                UserContextHolder.getContext().getCorrelationId());
         randomlyLong();
 
         return organization;

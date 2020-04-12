@@ -2,13 +2,16 @@ package dev.appkr.licenses.controllers;
 
 import dev.appkr.licenses.model.License;
 import dev.appkr.licenses.services.LicenseService;
+import dev.appkr.licenses.utils.UserContextHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("v1/organizations/{organizationId}/licenses")
 @RequiredArgsConstructor
+@Slf4j
 public class LicenseServiceController {
 
     private final LicenseService licenseService;
@@ -16,6 +19,9 @@ public class LicenseServiceController {
     @GetMapping("/{licenseId}")
     public License getLicense(@PathVariable("organizationId") String organizationId,
                               @PathVariable("licenseId") String licenseId) {
+        log.info("LicenseServiceController.getLicense Correlation id: {}",
+                UserContextHolder.getContext().getCorrelationId());
+
         return licenseService.getLicense(organizationId, licenseId);
     }
 

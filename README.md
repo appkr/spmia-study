@@ -218,3 +218,16 @@ $ curl -s http://localhost:8080/v1/tools/eureka/services | jq
 ```
 
 ![](docs/eurekasvr.png)
+
+#### CH5
+
+To relay parent thread's context - Use ThreadLocal
+```bash
+$ curl -s -H "tmx-correlation-id: TEST-CORRELATION-ID" http://localhost:8080/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c/licenses/08dbe05-606e-4dad-9d33-90ef10e334f9 | jq
+```
+```bash
+# The threadNames are the same... was not able to make HystrixCommand run on another thread
+2020-04-13 00:36:04.948  INFO 96412 --- [nio-8080-exec-2] d.a.licenses.utils.UserContextFilter     : UserContextFilter Correlation id: TEST-CORRELATION-ID
+2020-04-13 00:36:04.952  INFO 96412 --- [nio-8080-exec-2] d.a.l.c.LicenseServiceController         : LicenseServiceController.getLicense Correlation id: TEST-CORRELATION-ID
+2020-04-13 00:36:04.993  INFO 96412 --- [nio-8080-exec-2] d.a.licenses.services.LicenseService     : LicenseService.getOrganization Correlation id: TEST-CORRELATION-ID
+```
