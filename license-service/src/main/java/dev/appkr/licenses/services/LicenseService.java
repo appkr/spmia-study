@@ -1,5 +1,6 @@
 package dev.appkr.licenses.services;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import dev.appkr.licenses.clients.OrganizationFeignClient;
 import dev.appkr.licenses.config.ServiceConfig;
 import dev.appkr.licenses.model.License;
@@ -22,11 +23,19 @@ public class LicenseService {
     private final ServiceConfig config;
 
     public License getLicense(String organizationId, String licenseId) {
-        final Optional<License> optional = licenseRepository.findByOrganizationIdAndLicenseId(organizationId, licenseId);
+        final Optional<License> optional = licenseRepository.findByLicenseId(licenseId);
         License license = optional.orElseThrow(NoSuchElementException::new);
 
         license.setComment(config.getExampleProperty());
 
+        final Organization organization = getOrganization(organizationId);
+        license.setOrganization(organization);
+
+        return license;
+    }
+
+    @HystrixCommand(fallbackMethod = "fallbackOrganization")
+    private Organization getOrganization(String organizationId) {
         Organization organization = Organization.builder().build();
         try {
             organization = organizationFeignClient.getOrganization(organizationId);
@@ -35,9 +44,30 @@ public class LicenseService {
             throw e;
         }
 
-        license.setOrganization(organization);
+        randomlyLong();
 
-        return license;
+        return organization;
+    }
+
+    private Organization fallbackOrganization() {
+        return Organization.builder()
+            .id("00000000-0000-0000-0000-000000000000")
+            .contactEmail("foo@example.com")
+            .contactName("Foo")
+            .contactPhone("123-456-7890")
+            .name("Foo")
+            .build();
+    }
+
+    private void randomlyLong() {
+        final int random = (int) (Math.random() * 3) + 1;
+        if (random == 2) {
+            try {
+                Thread.sleep(11000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void createLicense(License license) {
