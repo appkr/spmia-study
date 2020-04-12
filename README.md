@@ -11,7 +11,7 @@ Root project 'spmia'
 \--- Project ':organization-service'
 ```
 
-#### Run application locally
+## 1 Run application locally
 Create databases
 ```sql
 CREATE DATABASE IF NOT EXISTS spmia_organization;
@@ -29,14 +29,18 @@ $ ./gradlew :license-service:bootRun
 ```
 
 OR <kbd>Cmd</kbd>+<kbd>8</kbd> if you prefer intellij
+![](docs/rundashboard.png)
 
-#### Run application on docker
-To start (Database will be automatically created at first run)
+## 2 Run application on docker
+To start
 ```sh
 $ ./gradlew up
 ```
+Note. The database and `mysql_data` volume will be automatically created at first run
 
-To stop
+To stop <kbd>Ctrl</kbd>+<kbd>c</kbd>
+
+To clear the containers
 ```sh
 $ ./gradlew down
 ```
@@ -67,7 +71,7 @@ $ ./gradlew down
 
 ---
 
-## Exercise
+## 3 Exercise
 
 This section is my personal record of studying the book
 
