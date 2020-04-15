@@ -1,0 +1,39 @@
+sourceCompatibility = '1.8'
+
+dependencies {
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = "openjdk:8-jre-alpine"
+    }
+
+    to {
+        image = "${project.name}:${project.version}"
+        tags = ['latest']
+    }
+
+    // If set to packaged, puts the JAR artifact built by the Gradle Java plugin into the final image.
+    // If set to exploded (default), containerizes individual .class files and resources files.
+    containerizingMode = 'packaged'
+
+    container {
+        jvmFlags = [
+                "-Dspring.profiles.active=docker",
+                "-Deureka.client.serviceUrl.defaultZone=http://eurekasvr:8761/eureka/",
+                "-Dspring.cloud.config.uri=http://configsvr:8888"
+        ]
+        ports = ["5555"]
+        creationTime = "USE_CURRENT_TIMESTAMP"
+    }
+}

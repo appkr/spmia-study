@@ -1,5 +1,6 @@
 rootProject.name = 'spmia'
 
+include 'apigateway'
 include 'configsvr'
 include 'eurekasvr'
 include 'organization-service'

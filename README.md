@@ -5,6 +5,7 @@
 $ gradle -q projects
 
 Root project 'spmia'
++--- Project ':apigateway'
 +--- Project ':configsvr'
 +--- Project ':eurekasvr'
 +--- Project ':license-service'
@@ -24,12 +25,13 @@ $ git clone git@github.com/appkr/spima-study
 $ ./gradlew clean 
 $ ./gradlew :configsvr:bootRun 
 $ ./gradlew :eurekasvr:bootRun 
+$ ./gradlew :apigateway:bootRun 
 $ ./gradlew :organization-service:bootRun 
 $ ./gradlew :license-service:bootRun 
 ```
 
 OR <kbd>Cmd</kbd>+<kbd>8</kbd> if you prefer intellij
-![](docs/rundashboard.png)
+![](docs/rundashboard.png) 
 
 ## 2 Run application on docker
 To start
@@ -234,4 +236,53 @@ $ curl -s -H "tmx-correlation-id: TEST-CORRELATION-ID" http://localhost:8080/v1/
 2020-04-13 00:36:04.948  INFO 96412 --- [nio-8080-exec-2] d.a.licenses.utils.UserContextFilter     : UserContextFilter Correlation id: TEST-CORRELATION-ID
 2020-04-13 00:36:04.952  INFO 96412 --- [nio-8080-exec-2] d.a.l.c.LicenseServiceController         : LicenseServiceController.getLicense Correlation id: TEST-CORRELATION-ID
 2020-04-13 00:36:04.993  INFO 96412 --- [nio-8080-exec-2] d.a.licenses.services.LicenseService     : LicenseService.getOrganization Correlation id: TEST-CORRELATION-ID
+```
+
+#### CH6
+
+The book suggests Zuul Proxy, but the [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway) was used instead.
+
+Is the gateway working?
+```bash
+$ curl -s http://localhost:5555/actuator/gateway/routes | jq
+# @see https://cloud.spring.io/spring-cloud-gateway/2.1.x/single/spring-cloud-gateway.html#_retrieving_the_routes_defined_in_the_gateway
+#  [
+#    {
+#      "predicate": "Paths: [/LICENSE-SERVICE/**], match trailing slash: true",
+#      "metadata": {
+#        "management.port": "8080"
+#      },
+#      "route_id": "ReactiveCompositeDiscoveryClient_LICENSE-SERVICE",
+#      "filters": [
+#        "[[RewritePath /LICENSE-SERVICE/(?<remaining>.*) = '/${remaining}'], order = 1]"
+#      ],
+#      "uri": "lb://LICENSE-SERVICE",
+#      "order": 0
+#    },
+#    {
+#      "predicate": "Paths: [/ORGANIZATION-SERVICE/**], match trailing slash: true",
+#      "metadata": {
+#        "management.port": "8090"
+#      },
+#      "route_id": "ReactiveCompositeDiscoveryClient_ORGANIZATION-SERVICE",
+#      "filters": [
+#        "[[RewritePath /ORGANIZATION-SERVICE/(?<remaining>.*) = '/${remaining}'], order = 1]"
+#      ],
+#      "uri": "lb://ORGANIZATION-SERVICE",
+#      "order": 0
+#    }
+#  ]
+```
+
+```bash
+$ curl -s http://localhost:5555/LICENSE-SERVICE/actuator/health | jq
+#  {
+#    "status": "UP"
+#  }
+
+$ curl -s http://localhost:5555/lic/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c/licenses/08dbe05-606e-4dad-9d33-90ef10e334f9 | jq
+#  {
+#    "licenseId": "08dbe05-606e-4dad-9d33-90ef10e334f9",
+#    ...
+#  }
 ```

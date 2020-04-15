@@ -1,0 +1,26 @@
+server:
+    port: 5555
+
+management:
+    endpoints:
+        enabled-by-default: true
+        web:
+            exposure:
+                # @see https://cloud.spring.io/spring-cloud-gateway/2.1.x/single/spring-cloud-gateway.html#_actuator_api
+                include: gateway
+    endpoint:
+        # @see https://cloud.spring.io/spring-cloud-gateway/2.1.x/single/spring-cloud-gateway.html#_actuator_api
+        gateway:
+            enabled: true
+
+spring:
+    cloud:
+        gateway:
+            # @see https://cloud.spring.io/spring-cloud-gateway/2.1.x/single/spring-cloud-gateway.html#_discoveryclient_route_definition_locator
+            discovery:
+                locator:
+                    enabled: true
+            # @see https://cloud.spring.io/spring-cloud-gateway/2.1.x/single/spring-cloud-gateway.html#_verbose_actuator_format
+            actuator:
+                verbose:
+                    enabled: true

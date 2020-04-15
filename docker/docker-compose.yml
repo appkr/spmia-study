@@ -41,6 +41,16 @@ services:
         healthcheck:
             test: ["CMD", "wget", "-qO-", "http://localhost:8888/actuator/health"]
 
+    apigateway:
+        image: apigateway:latest
+        container_name: apigateway
+        ports:
+            - "5555:5555"
+        depends_on:
+            - eurekasvr
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:5555/actuator/health"]
+
     organization-service:
         image: organization-service:latest
         container_name: organization-service
@@ -50,6 +60,7 @@ services:
             - mysql
             - eurekasvr
             - configsvr
+            - apigateway
         healthcheck:
             test: ["CMD", "wget", "-qO-", "http://localhost:8090/actuator/health"]
         restart: on-failure
@@ -66,6 +77,7 @@ services:
             - mysql
             - eurekasvr
             - configsvr
+            - apigateway
             - organization-service
         healthcheck:
             test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
