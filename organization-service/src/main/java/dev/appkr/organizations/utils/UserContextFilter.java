@@ -1,4 +1,4 @@
-package dev.appkr.licenses.utils;
+package dev.appkr.organizations.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -15,7 +15,7 @@ public class UserContextFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         MDC.put(UserContext.TRACE_ID, httpRequest.getHeader(UserContext.TRACE_ID));

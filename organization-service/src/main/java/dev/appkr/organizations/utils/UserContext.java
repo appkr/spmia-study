@@ -1,4 +1,4 @@
-package dev.appkr.licenses.utils;
+package dev.appkr.organizations.utils;
 
 public class UserContext {
 

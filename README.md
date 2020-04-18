@@ -286,3 +286,23 @@ $ curl -s http://localhost:5555/lic/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1
 #    ...
 #  }
 ```
+
+Context relay
+```bash
+$ curl -s -i -H "x-b3-traceid: d4ca90093540675a" http://localhost:5555/lic/v1/organizations/442adb6e-fa58-47f3-9ca2-ed1fecdfe86c/licenses/08dbe05-606e-4dad-9d33-90ef10e334f9
+#  HTTP/1.1 200 OK
+#  transfer-encoding: chunked
+#  Content-Type: application/json
+#  Date: Sun, 19 Apr 2020 07:25:27 GMT
+#  x-b3-traceid: d4ca90093540675a
+#  
+#  {"licenseId":"08dbe05-606e-4dad-9d33-90ef10e334f9","organizationId":"442adb6e-fa58-47f3-9ca2-ed1fecdfe86c","organization":{"id":"442adb6e-fa58-47f3-9ca2-ed1fecdfe86c","name":"HR-PowerSuite","contactName":"Doug Drewry","contactEmail":"doug.drewry@hr.com","contactPhone":"920-555-1212"},"productName":"WildCat Application Gateway","licenseType":"core-prod","licenseMax":16,"licenseAllocated":16,"comment":"I AM IN THE DEFAULT"}
+
+# license-service
+# 2020-04-19 16:25:15.869  INFO 52587 --- [nio-8080-exec-1] d.a.licenses.utils.UserContextFilter     : UserContextFilter traceId: d4ca90093540675a
+# 2020-04-19 16:25:15.896  INFO 52587 --- [nio-8080-exec-1] d.a.l.c.LicenseServiceController         : LicenseServiceController.getLicense traceId: d4ca90093540675a
+
+# organization-service
+# 2020-04-19 16:25:16.437  INFO 52595 --- [nio-8090-exec-1] d.a.o.utils.UserContextFilter            : UserContextFilter traceId: d4ca90093540675a
+# 2020-04-19 16:25:16.463  INFO 52595 --- [nio-8090-exec-1] d.a.o.c.OrganizationServiceController    : OrganizationServiceController.getOrganization traceId: d4ca90093540675a
+```

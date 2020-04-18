@@ -1,15 +1,16 @@
 package dev.appkr.licenses.services;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import dev.appkr.licenses.clients.OrganizationFeignClient;
+import dev.appkr.licenses.clients.OrganizationRestTemplateClient;
 import dev.appkr.licenses.config.ServiceConfig;
 import dev.appkr.licenses.model.License;
 import dev.appkr.licenses.model.Organization;
 import dev.appkr.licenses.repository.LicenseRepository;
-import dev.appkr.licenses.utils.UserContextHolder;
+import dev.appkr.licenses.utils.UserContext;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class LicenseService {
 
     private final LicenseRepository licenseRepository;
-    private final OrganizationFeignClient organizationFeignClient;
+    private final OrganizationRestTemplateClient organizationRestTemplateClient;
     private final ServiceConfig config;
 
     public License getLicense(String organizationId, String licenseId) {
@@ -40,15 +41,10 @@ public class LicenseService {
     @HystrixCommand(fallbackMethod = "fallbackOrganization", threadPoolKey = "getOrganizationThreadPool")
     public Organization getOrganization(String organizationId) {
         Organization organization = Organization.builder().build();
-        try {
-            organization = organizationFeignClient.getOrganization(organizationId);
-        } catch (FeignException e) {
-            e.printStackTrace();
-            throw e;
-        }
 
-        log.info("LicenseService.getOrganization Correlation id: {}",
-                UserContextHolder.getContext().getCorrelationId());
+        organization = organizationRestTemplateClient.getOrganization(organizationId);
+
+        log.info("LicenseService.getOrganization tracdId: {}", MDC.get(UserContext.TRACE_ID));
         randomlyLong();
 
         return organization;
