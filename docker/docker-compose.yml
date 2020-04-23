@@ -51,6 +51,19 @@ services:
         healthcheck:
             test: ["CMD", "wget", "-qO-", "http://localhost:5555/actuator/health"]
 
+    uaa:
+        image: uaa:latest
+        container_name: uaa
+        ports:
+            - "8901:8901"
+        depends_on:
+            - mysql
+            - eurekasvr
+            - configsvr
+            - apigateway
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://localhost:8901/actuator/health"]
+
     organization-service:
         image: organization-service:latest
         container_name: organization-service

@@ -306,3 +306,16 @@ $ curl -s -i -H "x-b3-traceid: d4ca90093540675a" http://localhost:5555/lic/v1/or
 # 2020-04-19 16:25:16.437  INFO 52595 --- [nio-8090-exec-1] d.a.o.utils.UserContextFilter            : UserContextFilter traceId: d4ca90093540675a
 # 2020-04-19 16:25:16.463  INFO 52595 --- [nio-8090-exec-1] d.a.o.c.OrganizationServiceController    : OrganizationServiceController.getOrganization traceId: d4ca90093540675a
 ```
+
+#### CH7
+
+```bash
+$ curl -s -XPOST -H "Authorization: basic d2ViYXBwOmNoYW5nZWl0" -H "Content-Type: application/x-www-form-urlencoded" http://localhost:8901/oauth/token\?grant_type\=password\&scope\=webclient\&username\=appkr\&password\=P@ssw0rd | jq
+#  {
+#    "access_token": "bf576485-6688-4ce8-826f-6c7454778a3c",
+#    "token_type": "bearer",
+#    "refresh_token": "41a9238f-fe7c-4863-91bd-f558cccde4fa",
+#    "expires_in": 43184,
+#    "scope": "webclient"
+#  }
+```
