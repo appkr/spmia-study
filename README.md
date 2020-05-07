@@ -310,7 +310,7 @@ $ curl -s -i -H "x-b3-traceid: d4ca90093540675a" http://localhost:5555/lic/v1/or
 #### CH7
 
 ```bash
-$ curl -s -XPOST -H "Authorization: basic d2ViYXBwOmNoYW5nZWl0" -H "Content-Type: application/x-www-form-urlencoded" http://localhost:8901/oauth/token\?grant_type\=password\&scope\=webclient\&username\=appkr\&password\=P@ssw0rd | jq
+$ curl -s -XPOST -H "Authorization: basic d2ViYXBwOmNoYW5nZWl0" -H "Content-Type: application/x-www-form-urlencoded" http://localhost:8901/oauth/token?grant_type=password&scope=webclient&username=appkr&password=P@ssw0rd | jq
 #  {
 #    "access_token": "bf576485-6688-4ce8-826f-6c7454778a3c",
 #    "token_type": "bearer",
